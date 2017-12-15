@@ -1,0 +1,95 @@
+
+{{$InterfaceName := .InterfaceName }}
+
+{{ range .Methods }}
+// MethodCallFor{{.Name}} defines a type which holds meta-details about the giving calls associated
+// with the {{$InterfaceName}}.{{.Name}}() method.
+type MethodCallFor{{.Name}} struct{
+    When time.Time
+    Start time.Time
+    End time.Time
+
+    // Details of panic if such occurs.
+    PanicStack []byte
+    PanicError interface{}
+
+    // Argument values.
+    {{ range .Args }}
+    {{capitalize .Name}} {{.ExType}}
+    {{end}}
+
+    // Return values.
+    {{ range .Returns }}
+    {{capitalize .Name}} {{.ExType}}
+    {{ end}}
+}
+{{ end }}
+
+// {{.InterfaceName}}Snitch defines a function type which implements a struct with the
+// methods for the {{.InterfaceName}} as fields which allows you provide implementations of
+// these functions to provide flexible testing.
+type {{.InterfaceName}}Snitch struct{
+    {{ range .Methods }}
+    {{.Name}}MethodCalls []MethodCallFor{{.Name}}
+    {{.Name}}Func func({{.ArgumentList true}}) ({{.ReturnList true}})
+    {{ end }}
+}
+
+{{ range .Methods }}
+// {{.Name}} implements the {{$InterfaceName}}.{{.Name}}() method for the {{$InterfaceName}}.
+func (impl *{{$InterfaceName}}Snitch) {{.Name}}({{.ArgumentList true}}) {{if notempty (.ReturnList true)}}({{.ReturnList true}}){{end}}{
+    var caller MethodCallFor{{.Name}}
+
+    defer func(){
+        if err := recover(); err != nil {
+            trace := make([]byte, 1000)
+            trace = trace[:runtime.Stack(trace, true)]
+
+            caller.PanicError = err
+            caller.PanicStack = trace
+        }
+
+        caller.End = time.Now()
+        impl.{{.Name}}MethodCalls = append(impl.{{.Name}}MethodCalls, caller)
+    }()
+
+    caller.When = time.Now()
+    caller.Start = caller.When
+
+    {{ range .Args }}
+    caller.{{capitalize .Name}} = {{.Name}}
+    {{ end }}
+
+    {{if empty .ReturnNamesList}}
+        impl.{{.Name}}Func({{.ArgumentNamesList}})
+    {{else}}
+        {{.ReturnNamesList}} := impl.{{.Name}}Func({{.ArgumentNamesList}})
+    {{end}}
+
+    {{ range .Returns }}
+        caller.{{capitalize .Name}} = {{.Name}}
+    {{ end }}
+
+    return {{.ReturnNamesList}}
+}
+{{ end }}
+
+// {{.InterfaceName}}Impl defines a concrete struct which implements the methods for the
+// {{.InterfaceName}} interface. All methods will panic, so add necessary internal logic.
+type {{.InterfaceName}}Impl struct{
+    {{ range .Methods }}
+    {{.Name}}Func func({{.ArgumentList true}}) ({{.ReturnList true}})
+    {{ end }}
+}
+
+{{ range .Methods }}
+// {{.Name}} implements the {{$InterfaceName}}.{{.Name}}() method for {{$InterfaceName}}Impl.
+func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ArgumentList true}}) {{if notempty (.ReturnList true)}}({{.ReturnList true}}){{end}}{
+    {{if empty .ReturnNamesList}}
+    impl.{{.Name}}Func({{.ArgumentNamesList}})
+    {{else}}
+    {{.ReturnNamesList}} := impl.{{.Name}}Func({{.ArgumentNamesList}})
+    return {{.ReturnNamesList}}
+    {{end}}
+}
+{{ end }}
