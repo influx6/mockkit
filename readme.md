@@ -1,5 +1,7 @@
 MockKit
 --------
+[![Go Report Card](https://goreportcard.com/badge/github.com/gokit/mockkit)](https://goreportcard.com/report/github.com/gokit/mockkit)
+
 MockKit implements a code generator which automatically generates a go package implementation for a giving declared interface with a mock type.
 
 ## Install
