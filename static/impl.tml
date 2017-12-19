@@ -1,0 +1,21 @@
+{{$InterfaceName := .InterfaceName }}
+
+// {{.InterfaceName}}Impl defines a concrete struct which implements the methods for the
+// {{.InterfaceName}} interface. All methods will panic, so add necessary internal logic.
+type {{.InterfaceName}}Impl struct{
+    {{ range .Methods }}
+    {{.Name}}Func func({{.ArgumentList true}}) ({{.ReturnList true}})
+    {{ end }}
+}
+
+{{ range .Methods }}
+// {{.Name}} implements the {{$InterfaceName}}.{{.Name}}() method for {{$InterfaceName}}Impl.
+func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ArgumentList true}}) {{if notempty (.ReturnList true)}}({{.ReturnList true}}){{end}}{
+    {{if empty .ReturnNamesList}}
+    impl.{{.Name}}Func({{.ArgumentNamesList}})
+    {{else}}
+    {{.ReturnNamesList}} := impl.{{.Name}}Func({{.ArgumentNamesList}})
+    return {{.ReturnNamesList}}
+    {{end}}
+}
+{{ end }}
