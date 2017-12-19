@@ -16,6 +16,7 @@ func ImplGen(toDir string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclar
 	interfaceName := itr.Object.Name.Name
 	packageName := fmt.Sprintf("%simpl", strings.ToLower(interfaceName))
 	packageMockName := fmt.Sprintf("%smock", strings.ToLower(interfaceName))
+
 	methods := itr.Methods(&pkgDeclr)
 
 	imports := make(map[string]string, 0)
