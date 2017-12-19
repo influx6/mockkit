@@ -69,7 +69,7 @@ func (impl *{{$InterfaceName}}Mock) {{.Name}}({{.ArgumentList true}}) (MethodCal
 
             caller.PanicError = possibleCall.PanicError
             caller.PanicStack = possibleCall.PanicStack
-            return 
+            break
         }
     }
 
