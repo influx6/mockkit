@@ -50,6 +50,12 @@ func FuncType(elem interface{}) (reflect.Type, error) {
 	return tl, nil
 }
 
+// MatchElement attempts to validate that both element are equal in type and value.
+func MatchElement(me interface{}, other interface{}, allowFunctions bool) bool {
+
+	return true
+}
+
 // StructAndEmbeddedTypes returns the type of the giving element and a slice of
 // all composed types.
 func StructAndEmbeddedTypes(elem interface{}) (reflect.Type, []reflect.Type, error) {

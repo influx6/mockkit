@@ -48,8 +48,6 @@ func ImplGen(toDir string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclar
 
 	var implImports []gen.ImportItemDeclr
 	implImports = append(implImports,
-		gen.Import("time", ""),
-		gen.Import("runtime", ""),
 		gen.Import(pkg.Path, ""),
 	)
 
