@@ -34,7 +34,10 @@ func main() {
 				return err
 			}
 
-			currentdir = filepath.Join(currentdir,target)
+			currentdir = filepath.Join(currentdir, target)
+			if !filepath.IsAbs(dest) {
+				dest = filepath.Join(currentdir, dest)
+			}
 
 			generators := ast.NewAnnotationRegistryWith(logs)
 			generators.Register("@implement", mock.ImplGen)
@@ -59,23 +62,11 @@ func main() {
 				Name:    "dest",
 				Default: "./",
 				Desc:    "relative destination for package",
-				Validation: func(received string) error {
-					if filepath.IsAbs(received) {
-						return errors.New("only relative paths not absolute allowed")
-					}
-					return nil
-				},
 			},
 			&flags.StringFlag{
 				Name:    "target",
 				Default: "./",
 				Desc:    "-target=./ defines relative path of target for code gen",
-				Validation: func(received string) error {
-					if filepath.IsAbs(received) {
-						return errors.New("only relative paths not absolute allowed")
-					}
-					return nil
-				},
 			},
 		},
 	})

@@ -12,7 +12,7 @@ import (
 )
 
 // ImplGen generates a mock package with implementation for giving type.
-func ImplGen(toDir string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
+func ImplGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
 	interfaceName := itr.Object.Name.Name
 	packageName := fmt.Sprintf("%simpl", strings.ToLower(interfaceName))
 	packageMockName := fmt.Sprintf("%smock", strings.ToLower(interfaceName))
