@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/gokit/mockkit/mock"
-	"github.com/influx6/faux/context"
 	"github.com/influx6/faux/flags"
 	"github.com/influx6/faux/metrics"
 	"github.com/influx6/faux/metrics/custom"
@@ -17,11 +16,11 @@ func main() {
 		Name:      "generate",
 		ShortDesc: "Generates mock packages for declared structs",
 		Desc:      "Generates go packages for structs with annotation directives",
-		Action: func(ctx context.Context) error {
-			force, _ := ctx.Bag().GetBool("force")
-			dest, _ := ctx.Bag().GetString("dest")
-			target, _ := ctx.Bag().GetString("target")
-			verbose, _ := ctx.Bag().GetBool("verbose")
+		Action: func(ctx flags.Context) error {
+			force, _ := ctx.GetBool("force")
+			dest, _ := ctx.GetString("dest")
+			target, _ := ctx.GetString("target")
+			verbose, _ := ctx.GetBool("verbose")
 
 			logs := metrics.New()
 			if verbose {
