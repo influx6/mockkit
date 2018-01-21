@@ -39,7 +39,8 @@ func main() {
 			currentdir = filepath.Join(currentdir, target)
 
 			generators := ast.NewAnnotationRegistryWith(logs)
-			generators.Register("@implement", mock.ImplGen)
+			generators.Register("@implement", mock.ImplOnlyGen)
+			generators.Register("@implement_mock", mock.ImplGen)
 
 			res, err := ast.ParseAnnotations(logs, currentdir)
 			if err != nil {

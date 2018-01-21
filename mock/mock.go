@@ -11,7 +11,77 @@ import (
 	"github.com/influx6/moz/gen"
 )
 
-// ImplGen generates a mock package with implementation for giving type.
+// ImplOnlyGen generates a implementation source file for a giving interface type.
+func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
+	methods := itr.Methods(&pkgDeclr)
+
+	imports := make(map[string]string, 0)
+
+	for _, method := range methods {
+		// Retrieve all import paths for arguments.
+		func(args []ast.ArgType) {
+			for _, argument := range args {
+				if argument.Import2.Path != "" {
+					imports[argument.Import2.Path] = argument.Import2.Name
+				}
+				if argument.Import.Path != "" {
+					imports[argument.Import.Path] = argument.Import.Name
+				}
+			}
+		}(method.Args)
+
+		// Retrieve all import paths for returns.
+		func(args []ast.ArgType) {
+			for _, argument := range args {
+				if argument.Import2.Path != "" {
+					imports[argument.Import2.Path] = argument.Import2.Name
+				}
+				if argument.Import.Path != "" {
+					imports[argument.Import.Path] = argument.Import.Name
+				}
+			}
+		}(method.Returns)
+	}
+
+	var implImports []gen.ImportItemDeclr
+	implImports = append(implImports,
+		gen.Import(pkg.Path, ""),
+	)
+
+	for path, name := range imports {
+		implImports = append(implImports, gen.Import(path, name))
+	}
+
+	implGen := gen.Block(
+		gen.Package(
+			gen.Name(itr.Package),
+			gen.Imports(implImports...),
+			gen.Block(
+				gen.SourceText(
+					string(static.MustReadFile("impl.tml", true)),
+					struct {
+						InterfaceName string
+						Package       ast.Package
+						Methods       []ast.FunctionDefinition
+					}{
+						Package:       pkg,
+						Methods:       methods,
+						InterfaceName: itr.Object.Name.Name,
+					},
+				),
+			),
+		),
+	)
+
+	return []gen.WriteDirective{
+		{
+			Writer:   fmtwriter.New(implGen, true, true),
+			FileName: fmt.Sprintf("%s.mockkit.go", strings.ToLower(itr.Object.Name.Name)),
+		},
+	}, nil
+}
+
+// ImplGen generates a mock package with implementation and mock types for giving interface type.
 func ImplGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
 	interfaceName := itr.Object.Name.Name
 	packageName := fmt.Sprintf("%simpl", strings.ToLower(interfaceName))
