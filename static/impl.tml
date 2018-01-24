@@ -10,12 +10,10 @@ type {{.InterfaceName}}Impl struct{
 
 {{ range .Methods }}
 // {{.Name}} implements the {{$InterfaceName}}.{{.Name}}() method for {{$InterfaceName}}Impl.
-func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ArgumentList true}}) {{if notempty (.ReturnList true)}}({{.ReturnList true}}){{end}}{
-    {{if empty .ReturnNamesList}}
+func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ArgumentList true}}) {{if notempty (.ReturnList true)}}({{.ReturnList true}}){{end}}{ {{if empty .ReturnNamesList}}
     impl.{{.Name}}Func({{.ArgumentNamesList}})
     {{else}}
     {{.ReturnNamesList}} := impl.{{.Name}}Func({{.ArgumentNamesList}})
-    return {{.ReturnNamesList}}
-    {{end}}
+    return {{.ReturnNamesList}}{{end}}
 }
 {{ end }}
