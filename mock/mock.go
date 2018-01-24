@@ -58,13 +58,18 @@ func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDe
 			gen.Imports(implImports...),
 			gen.Block(
 				gen.SourceText(
-					string(static.MustReadFile("impl.tml", true)),
+					"mockonly",
+					string(static.MustReadFile("impl-only.tml", true)),
 					struct {
 						InterfaceName string
 						Package       ast.Package
 						Methods       []ast.FunctionDefinition
+						Itr           ast.InterfaceDeclaration
+						Pkg           ast.PackageDeclaration
 					}{
+						Itr:           itr,
 						Package:       pkg,
+						Pkg:           pkgDeclr,
 						Methods:       methods,
 						InterfaceName: itr.Object.Name.Name,
 					},
@@ -143,12 +148,17 @@ func ImplGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclar
 			gen.Imports(mockImports...),
 			gen.Block(
 				gen.SourceText(
+					"mock",
 					string(static.MustReadFile("mock.tml", true)),
 					struct {
 						InterfaceName string
 						Package       ast.Package
 						Methods       []ast.FunctionDefinition
+						Itr           ast.InterfaceDeclaration
+						Pkg           ast.PackageDeclaration
 					}{
+						Itr:           itr,
+						Pkg:           pkgDeclr,
 						Package:       pkg,
 						Methods:       methods,
 						InterfaceName: interfaceName,
@@ -164,6 +174,7 @@ func ImplGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclar
 			gen.Imports(implImports...),
 			gen.Block(
 				gen.SourceText(
+					"mock-impl",
 					string(static.MustReadFile("impl.tml", true)),
 					struct {
 						InterfaceName string
