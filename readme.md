@@ -10,6 +10,10 @@ MockKit implements a code generator which automatically generates a go package i
 go get -u github.com/gokit/mockkit
 ```
 
+## Examples
+
+See [Examples](./examples) for demonstrations of mockkit code generation.
+
 ## Usage
 
 Running the following commands instantly generates all necessary files and packages for giving code gen.
