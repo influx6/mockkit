@@ -1,8 +1,9 @@
 {{$InterfaceName := .InterfaceName }}
 {{$PackageName := .Pkg.Package }}
 
-// {{.InterfaceName}}Impl defines a concrete struct which implements the methods for the
-// {{.InterfaceName}} interface. All methods will panic, so add necessary internal logic.
+// {{.InterfaceName}}Impl defines a lego block struct which services the methods defined
+// by the {{.InterfaceName}} interface as assignable fields. These functions are called when the respective
+// functions of the struct is called.
 type {{.InterfaceName}}Impl struct{
     {{ range .Methods }}
     {{.Name}}Func func({{.ExArgumentList true $PackageName}}) ({{.ExReturnList true $PackageName}})
@@ -10,7 +11,8 @@ type {{.InterfaceName}}Impl struct{
 }
 
 {{ range .Methods }}
-// {{.Name}} implements the {{$InterfaceName}}.{{.Name}}() method for {{$InterfaceName}}Impl.
+// {{.Name}} implements the {{$InterfaceName}}.{{.Name}} method for {{$InterfaceName}} interface.
+// It calls the {{$InterfaceName}}Impl.{{.Name}}Func field underneath.
 func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ExArgumentList true $PackageName}}) {{if notequal .TotalReturns 0 }}({{.ExReturnList true $PackageName}}){{end}}{ {{if empty .ReturnNamesList}}
     impl.{{.Name}}Func({{.ArgumentNamesList}})
     {{else}}
