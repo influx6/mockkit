@@ -1,8 +1,8 @@
 {{$InterfaceName := .InterfaceName }}
 
 // {{.InterfaceName}}Impl defines a lego block struct which services the methods defined
-// by the {{.InterfaceName}} interface as assignable fields. These functions are called when the respective
-// functions of the struct is called.
+// by the {{.InterfaceName}} interface as assignable fields. These functions are called
+// when the respective functions of the struct is called.
 type {{.InterfaceName}}Impl struct{
     {{ range .Methods }}
     {{.Name}}Func func({{.ArgumentList true}}) ({{.ReturnList true}})
