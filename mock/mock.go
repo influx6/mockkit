@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/gokit/mockkit/static"
-	"github.com/influx6/faux/fmtwriter"
 	"github.com/influx6/moz/ast"
 	"github.com/influx6/moz/gen"
 )
@@ -80,7 +79,7 @@ func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDe
 
 	return []gen.WriteDirective{
 		{
-			Writer:   fmtwriter.New(implGen, true, true),
+			Writer:   implGen,
 			FileName: fmt.Sprintf("%s.mockkit.go", strings.ToLower(itr.Object.Name.Name)),
 		},
 	}, nil
@@ -191,13 +190,13 @@ func ImplGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclar
 	)
 
 	directives = append(directives, gen.WriteDirective{
-		Writer:   fmtwriter.New(mockGen, true, true),
+		Writer:   mockGen,
 		FileName: fmt.Sprintf("%s.go", packageMockName),
 		Dir:      filepath.Join(packageName, packageMockName),
 	})
 
 	directives = append(directives, gen.WriteDirective{
-		Writer:   fmtwriter.New(implGen, true, true),
+		Writer:   implGen,
 		FileName: fmt.Sprintf("%s.go", packageName),
 		Dir:      packageName,
 	})
