@@ -20,7 +20,7 @@ func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDe
 		packageName = itr.Package
 	} else {
 		templateName = "impl.tml"
-		packageName = strings.ToLower(filepath.Base(packageName))
+		packageName = strings.ToLower(filepath.Base(toPkg))
 	}
 
 	methods := itr.Methods(&pkgDeclr)
