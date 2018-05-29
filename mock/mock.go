@@ -14,10 +14,13 @@ import (
 func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
 	dirPath := pkgDeclr.Dir
 	var templateName string
+	var packageName string
 	if strings.HasSuffix(dirPath, toPkg) {
 		templateName = "impl-only.tml"
+		packageName = itr.Package
 	} else {
 		templateName = "impl.tml"
+		packageName = strings.ToLower(filepath.Base(packageName))
 	}
 
 	methods := itr.Methods(&pkgDeclr)
@@ -61,7 +64,7 @@ func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDe
 
 	implGen := gen.Block(
 		gen.Package(
-			gen.Name(itr.Package),
+			gen.Name(packageName),
 			gen.Imports(implImports...),
 			gen.Block(
 				gen.SourceText(
