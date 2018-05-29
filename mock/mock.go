@@ -12,6 +12,19 @@ import (
 
 // ImplOnlyGen generates a implementation source file for a giving interface type.
 func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDeclaration, pkgDeclr ast.PackageDeclaration, pkg ast.Package) ([]gen.WriteDirective, error) {
+	dirPath := pkgDeclr.Dir
+	//if runtime.GOOS == "windows" {
+	//	toPkg = filepath.ToSlash(toPkg)
+	//	dirPath = filepath.ToSlash(dirPath)
+	//}
+
+	var templateName string
+	if strings.HasSuffix(dirPath, toPkg) {
+		templateName = "impl-only.tml"
+	} else {
+		templateName = "impl.tml"
+	}
+
 	methods := itr.Methods(&pkgDeclr)
 
 	imports := make(map[string]string, 0)
@@ -58,7 +71,7 @@ func ImplOnlyGen(toPkg string, an ast.AnnotationDeclaration, itr ast.InterfaceDe
 			gen.Block(
 				gen.SourceText(
 					"mockonly",
-					string(static.MustReadFile("impl-only.tml", true)),
+					string(static.MustReadFile(templateName, true)),
 					struct {
 						InterfaceName string
 						Package       ast.Package
