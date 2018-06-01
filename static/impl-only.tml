@@ -7,6 +7,7 @@
 type {{.InterfaceName}}Impl struct{
     {{ range .Methods }}
     {{.Name}}Func func({{.ExArgumentList true $PackageName}}) ({{.ExReturnList true $PackageName}})
+    {{.Name}}Invoked bool
     {{ end }}
 }
 
@@ -14,8 +15,10 @@ type {{.InterfaceName}}Impl struct{
 // {{.Name}} implements the {{$InterfaceName}}.{{.Name}} method for {{$InterfaceName}} interface.
 // It calls the {{$InterfaceName}}Impl.{{.Name}}Func field underneath.
 func (impl {{$InterfaceName}}Impl) {{.Name}}({{.ExArgumentList true $PackageName}}) {{if notequal .TotalReturns 0 }}({{.ExReturnList true $PackageName}}){{end}}{ {{if empty .ReturnNamesList}}
+    impl.{{.Name}}Invoked = true
     impl.{{.Name}}Func({{.ArgumentNamesList}})
     {{else}}
+    impl.{{.Name}}Invoked = true
     {{.ReturnNamesList}} := impl.{{.Name}}Func({{.ArgumentNamesList}})
     return {{.ReturnNamesList}}{{end}}
 }

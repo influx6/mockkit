@@ -17,10 +17,10 @@ func main() {
 		ShortDesc: "Generates mock packages for declared structs",
 		Desc:      "Generates go packages for structs with annotation directives",
 		Action: func(ctx flags.Context) error {
-			force, _ := ctx.GetBool("force")
-			dest, _ := ctx.GetString("dest")
-			target, _ := ctx.GetString("target")
-			verbose, _ := ctx.GetBool("verbose")
+			force := ctx.GetBool("force")
+			dest := ctx.GetString("dest")
+			target := ctx.GetString("target")
+			verbose := ctx.GetBool("verbose")
 
 			logs := metrics.New()
 			if verbose {
